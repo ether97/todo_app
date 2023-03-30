@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+      }
+      table,
+      th,
+      td,
+      tr {
+        border: solid 2px black;
+      }
+      #todo-form {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        gap: 20px;
+      }
+    </style>
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>To Do List</h1>
+    <table id="todo-table">
+      <tr>
+        <th>filename</th>
+        <th>title</th>
+        <th>description</th>
+        <th>status</th>
+        <th>priority</th>
+        <th>date</th>
+        <th>id</th>
+      </tr>
+    </table>
+    <form id="todo-form">
+      <label>title:</label>
+      <input type="text" id="input-title" name="title" required />
+      <label>description:</label>
+      <input type="text" id="input-desc" name="description" required />
+
+      <label>priority: </label>
+      <input type="text" id="input-priority" name="priority" required />
+
+      <label>status:</label>
+      <input type="text" id="input-status" name="status" required />
+      <input type="submit" />
+    </form>
+    <script>
+      var table = document.getElementById("todo-table");
+      function createRow(todo) {
+        var row = document.createElement("tr");
+
+        let cells = Array.from(Object.values(todo));
+        for (let j = 0; j < cells.length; j++) {
+          var cell = document.createElement("td");
+          cell.innerHTML = cells[j];
+          row.appendChild(cell);
+        }
+        return row;
+      }
+      function populateData(data) {
+        for (let i = 0; i < data.length; i++) {
+          let todo = data[i];
+          table.appendChild(createRow(todo));
+        }
+      }
+      async function showTable() {
+        const todoList = await fetch("http://localhost:5000/todo/todo.json");
+        const todoListJSON = await todoList.json();
+        Promise.all([todoListJSON]).then(() => {
+          populateData(todoListJSON);
+        });
+      }
+
+      showTable();
+      var form = document
+        .getElementById("todo-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          var formData = new FormData(this);
+          var todo = Array.from(formData).reduce(
+            (map, [key, value]) => ({
+              ...map,
+              [key]: value,
+              filename: "todo.json",
+              timestamp: "",
+              id: "",
+            }),
+            {}
+          );
+          const newToDo = {
+            filename: "todo.json",
+            todo: todo,
+          };
+          console.log(newToDo);
+          const addedToDo = await fetch("http://localhost:5000/add", {
+            method: "POST",
+            body: JSON.stringify(newToDo),
+          });
+          showTable();
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "week02day03",
+  "version": "1.0.0",
+  "main": "todoList.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "date-fns": "^2.29.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22",
+    "serve-index": "^1.9.1"
+  },
+  "description": ""
+}
